@@ -26,13 +26,10 @@ from absl import logging
 import gin
 import jax
 import jax.numpy as jnp
-
-
-# Import from meliad transformer (meliad_lib/meliad must be on sys.path)
 from transformer import attention
 from transformer import nn_components
 from transformer import position
-from transformer.transformer_layer import TransformerLayer
+from transformer import transformer_layer
 
 
 Array = jnp.ndarray
@@ -55,7 +52,7 @@ def slice_in_dim_1(window_length: int) -> Callable[[Array, Array], Array]:
 
 
 @gin.configurable
-class TransformerLayerGenerate(TransformerLayer):
+class TransformerLayerGenerate(transformer_layer.TransformerLayer):
   """Full transformer layer, with attention."""
 
   def _next_decoder_state(

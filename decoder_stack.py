@@ -13,34 +13,32 @@
 # limitations under the License.
 # ==============================================================================
 
-"""The decoder stack in inference mode.
-
-Patched for modern meliad compatibility (2026+).
-Requires meliad_lib/meliad to be on sys.path.
-"""
+"""The decoder stack in inference mode."""
 
 from typing import Any, Tuple
 
 import gin
-import jax.numpy as jnp
-import flax.struct as struct
-
-# Import from meliad transformer using direct module path
-# (meliad_lib/meliad must be on sys.path)
-from transformer.decoder_stack import DecoderStack, DStackWindowState, TransformerTaskConfig
-from transformer import nn_components
-from transformer import position
-from transformer import attention
-
+from transformer import decoder_stack
 import transformer_layer as tl
 
+
+struct = decoder_stack.struct
+nn_components = decoder_stack.nn_components
+position = decoder_stack.position
+jnp = decoder_stack.jnp
+attention = decoder_stack.attention
+
+DStackWindowState = decoder_stack.DStackWindowState
+
 Array = Any
+
+TransformerTaskConfig = decoder_stack.TransformerTaskConfig
 
 DStackDecoderState = Tuple[tl.DecoderState, ...]
 
 
 @gin.configurable
-class DecoderStackGenerate(DecoderStack):
+class DecoderStackGenerate(decoder_stack.DecoderStack):
   """Stack of transformer decoder layers."""
 
   layer_factory = tl.TransformerLayerGenerate
