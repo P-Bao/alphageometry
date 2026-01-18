@@ -22,11 +22,8 @@ import gin
 import jax
 import jax.numpy as jnp
 
-# Fallback imports for modern meliad compatibility
-try:
-    from transformer import models
-except ImportError:
-    from meliad.transformer import models
+# Import from meliad transformer (meliad_lib/meliad must be on sys.path)
+from transformer import models
 
 
 @gin.configurable

@@ -25,11 +25,8 @@ import jax
 import models  # pylint: disable=unused-import
 import sentencepiece as spm
 
-# Fallback imports for modern meliad compatibility
-try:
-    from transformer import inference_utils
-except ImportError:
-    from meliad.transformer import inference_utils
+# Import from meliad transformer (meliad_lib/meliad must be on sys.path)
+from transformer import inference_utils
 
 
 np = jax.numpy
