@@ -13,12 +13,17 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Wrapper for language modeling inference implemented in Meliad."""
+"""Wrapper for language modeling inference implemented in Meliad.
+
+Patched for modern JAX/meliad compatibility (2026+).
+- Replaced t5.data.SentencePieceVocabulary with sentencepiece directly
+- Compatible with JAX 0.4.17+ and meliad latest
+"""
 from typing import Any, Dict
 
 import jax
 import models  # pylint: disable=unused-import
-import t5.data
+import sentencepiece as spm
 from transformer import inference_utils
 
 
@@ -33,11 +38,29 @@ MetricsOutput = Dict[str, Any]  # Metrics output by model.
 parse_gin_configuration = inference_utils.parse_gin_configuration
 
 
+class SentencePieceVocabulary:
+  """Simple SentencePiece vocabulary wrapper (replaces t5.data.SentencePieceVocabulary)."""
+  
+  def __init__(self, vocab_path: str):
+    self.sp = spm.SentencePieceProcessor()
+    self.sp.Load(vocab_path)
+  
+  def encode(self, text: str) -> list[int]:
+    return self.sp.EncodeAsIds(text)
+  
+  def decode(self, ids: list[int]) -> str:
+    return self.sp.DecodeIds(ids)
+
+
 class LanguageModelInference:
   """Meliad wrapper for LM inference."""
 
-  def __init__(self, vocab_path: str, load_dir: str, mode='beam_search'):
-    self.vocab = t5.data.SentencePieceVocabulary(vocab_path)
+  def __init__(self, vocab_path: str, ckpt_init: str = None, load_dir: str = None, mode='beam_search'):
+    # Support both ckpt_init and load_dir for backward compatibility
+    if load_dir is None:
+      load_dir = ckpt_init
+    
+    self.vocab = SentencePieceVocabulary(vocab_path)
 
     # This task won't be pulling from a dataset.
     def null_iter_fn() -> None:
