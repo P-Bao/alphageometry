@@ -21,7 +21,12 @@ import decoder_stack
 import gin
 import jax
 import jax.numpy as jnp
-from transformer import models
+
+# Fallback imports for modern meliad compatibility
+try:
+    from transformer import models
+except ImportError:
+    from meliad.transformer import models
 
 
 @gin.configurable

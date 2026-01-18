@@ -26,10 +26,19 @@ from absl import logging
 import gin
 import jax
 import jax.numpy as jnp
-from transformer import attention
-from transformer import nn_components
-from transformer import position
-from transformer import transformer_layer
+
+# Fallback imports for modern meliad compatibility
+try:
+    from transformer import attention
+    from transformer import nn_components
+    from transformer import position
+    from transformer import transformer_layer
+except ImportError:
+    from meliad.transformer import attention
+    from meliad.transformer import nn_components
+    from meliad.transformer import position
+    from meliad.transformer import transformer_layer
+
 
 
 Array = jnp.ndarray

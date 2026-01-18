@@ -24,7 +24,12 @@ from typing import Any, Dict
 import jax
 import models  # pylint: disable=unused-import
 import sentencepiece as spm
-from transformer import inference_utils
+
+# Fallback imports for modern meliad compatibility
+try:
+    from transformer import inference_utils
+except ImportError:
+    from meliad.transformer import inference_utils
 
 
 np = jax.numpy
